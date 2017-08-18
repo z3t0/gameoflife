@@ -6,19 +6,38 @@
 """
 import random
 import time
+import sys
 from colorama import Fore, Style
 
-size = 20
-spawn = 50
+size = None
+spawn = None
+
+
+def usage():
+    print("Usage: game.py size spawn")
+
 
 def main():
+    global size
+    global spawn
+
+    if len(sys.argv) < 3:
+        usage()
+        return
+    else:
+        try:
+            size = int(sys.argv[1])
+            spawn = int(sys.argv[2])
+        except:
+            usage()
+            return
+
     print("My Game of Life")
+
     world = [[0] * size for _ in range(size)]
 
     for x in range(spawn):
-        seed(world, size, size)
-
-    world[0][1] = 1
+        seed(world, 0, size, 0, size)
 
     pworld(world)
 
@@ -39,9 +58,9 @@ def main():
     print("Survived:", rounds)
 
 
-def seed(world, maxX, maxY):
-    x = random.randint(0, maxX - 1)
-    y = random.randint(0, maxY - 1)
+def seed(world, minX, maxX, minY, maxY):
+    x = random.randint(minX, maxX - 1)
+    y = random.randint(minY, maxY - 1)
 
     world[x][y] = 1
 
@@ -80,7 +99,7 @@ def act(unit, world, x, y):
             die(unit, world, x, y)
             return True
     else:
-        if resource is 3:
+        if resource > 3:
             live(unit, world, x, y)
             return True
         # Currently Dead
@@ -89,12 +108,12 @@ def act(unit, world, x, y):
 
 
 def live(unit, world, x, y):
-    print("Born: ", x, y)
+    # print("Born: ", x, y)
     world[y][x] = 1
 
 
 def die(unit, world, x, y):
-    print("Killed: ", x, y)
+    # print("Killed: ", x, y)
     world[y][x] = 0
 
 
@@ -149,5 +168,6 @@ def pworld(world):
         print(Style.RESET_ALL)
 
     print()
+
 
 main()
